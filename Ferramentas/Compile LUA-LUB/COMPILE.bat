@@ -1,0 +1,1 @@
+luac5.1.4.exe -o itemInfo.lub itemInfo.lua
