@@ -1,0 +1,136 @@
+//                                                                                                
+//                                                                                                    
+//  DDDDDDDD      D                          D       DDDDDDDDDD                                       
+// DDDDDDDDDDD  DDDD                      DDDDD      DDDDDDDDDDD                                      
+//  DDDDDDDDDD DDDDD                      DDDDD       DDDD  DDDD                                      
+//   DDDD  DDDD DD                        DDDDD       DDDD    DD                                      
+//   DDDD  DDDD    D    DD   DD     DD     DDDD       DDDD          DD       DD  D     D   D    D     
+//   DDDD  DDDD DDDD  DDDDDD DDD  DDDDDD   DDDD       DDDD  D     DDDDDD   DDDD DDD DDDD DDDD DDDDD   
+//   DDDD  DDDDDDDDD  DDDDDD DD  DDD  DD   DDDD       DDDD DD    DD  DDD  DDDDDDDDD DDDDDDDDDDDDDDD   
+//   DDDDDDDDD  DDDD   DDDDD D   DDD  DDD  DDDD       DDDDDDD    DD  DDDD  DDDDDDDD DDDDDDDDDD DDDD   
+//   DDDDDDDD   DDDD    DDDDDD  DDDDDDDDD  DDDD       DDDDDDD        DDDD  DDDD DD  DDDD  DDDD DDDD   
+//   DDDDDD     DDDD     DDDD   DDDDDDDDD  DDDD       DDDD  D     DDDDDDD  DDDD     DDDD  DDDD  DDD   
+//   DDDD       DDDD    DDDDDD  DDDD       DDDD       DDDD  D    DDD DDDD  DDDD     DDDD  DDDD  DDD   
+//   DDDD       DDDD    D DDDD   DDD       DDDD       DDDD      DDDD DDDD  DDDD     DDDD  DDDD DDDD   
+//   DDDD       DDDD   DD DDDDD  DDDD  DD  DDDD       DDDD      DDDD DDDDD DDDD     DDDD  DDDD DDDD   
+//  DDDDDD     DDDDDD DDD DDDDDD DDDDDDD  DDDDDD    DDDDDDD     DDDDDDDDD DDDDDD    DDDDDDDDDD DDDDD  
+//  DDDDDD     DDDDDDDDDD DDDDDD  DDDDD   DDDDD      DDDDDD      DDDD DDD DDDDDD   DDDDD DDDDD DDDDD  
+// ===========================================================
+//===== Script ===============================================
+//= Provador de Itens.
+//===== Por: =================================================
+//= Pixel Farm
+//===== Versão Atual: ========================================
+//= 1.0
+//===== Compatibilidade: =====================================
+//= Cronus, Rathena, Hercules e BrAthena.
+//===== Descrição: ===========================================
+//= NPC que permite ao jogador visualizar os itens com um tempo configurável.
+//===== ChangeLog: ===========================================
+//05/09/2017 = Criação do script e configurações gerais. [Pixel Farm]
+//============================================================
+prontera,159,184,3	script	Provador de Itens	462,{
+
+//===== Configurações do NPC =================================
+
+.npc$ = "[Provador de Itens]"; // Nome do NPC.
+.time = 5; // Tempo que o jogador vai provar o item(em segundos).
+setarray .topo[0], 5013, 5137; // ID dos equipamentos[Topo]. (Para desabilitar coloque 0).
+setarray .meio[0], 5288, 5401; // ID dos equipamentos[Meio]. (Para desabilitar coloque 0).
+setarray .baixo[0], 5846, 18505; // ID dos equipamentos[Baixo]. (Para desabilitar coloque 0).
+
+//============================================================
+
+mes .npc$;
+mes "Olá "+strcharinfo(0)+", escolha o tipo de item que você deseja provar.";
+
+	switch(select(""+((.topo == 0 || !.topo)?"":"- Equipamentos [Topo]")+":"+((.meio == 0 || !.meio)?"":"- Equipamentos [Meio]")+":"+((.baixo == 0 || !.baixo)?"":"- Equipamentos [Baixo]")+"")){
+
+		case 1:
+
+			next;
+			mes .npc$;
+			mes "Selecione o item que você deseja visualizar.";
+
+			for( set .@i, 0; .@i < getarraysize(.topo); set .@i, .@i + 1 )
+			set .@menu$, .@menu$ + getitemname(.topo[.@i]) + ":";
+
+			set .topo, .topo[select(.@menu$) - 1];
+
+			next;
+			mes .npc$;
+			mes "Tem certeja que deseja visualizar o item [" + getitemname(.topo) + "] ?";
+
+			if (select("- Sim:- Não") == 2) close;
+
+				.atual = getlook(LOOK_HEAD_TOP);
+				.view = getiteminfo (.topo,11);
+
+				next;
+				mes .npc$;
+				mes "Você tem "+.time+" segundos para visualizar o item.";
+				close2;
+				changelook VAR_HEAD_TOP,.view;
+				sleep2 .time*1000;
+				changelook VAR_HEAD_TOP,.atual;
+				end;
+		
+		case 2:
+			
+			next;
+			mes .npc$;
+			mes "Selecione o item que você deseja visualizar.";
+
+			for( set .@i, 0; .@i < getarraysize(.meio); set .@i, .@i + 1 )
+			set .@menu$, .@menu$ + getitemname(.meio[.@i]) + ":";
+
+			set .meio, .meio[select(.@menu$) - 1];
+
+			next;
+			mes .npc$;
+			mes "Tem certeja que deseja visualizar o item [" + getitemname(.meio) + "] ?";
+
+			if (select("- Sim:- Não") == 2) close;
+
+				.atual = getlook(LOOK_HEAD_MID);
+				.view = getiteminfo (.meio,11);
+
+				next;
+				mes .npc$;
+				mes "Você tem "+.time+" segundos para visualizar o item.";
+				close2;
+				changelook LOOK_HEAD_MID,.view;
+				sleep2 .time*1000;
+				changelook LOOK_HEAD_MID,.atual;
+				end;
+				
+		case 3:
+			
+			next;
+			mes .npc$;
+			mes "Selecione o item que você deseja visualizar.";
+
+			for( set .@i, 0; .@i < getarraysize(.baixo); set .@i, .@i + 1 )
+			set .@menu$, .@menu$ + getitemname(.baixo[.@i]) + ":";
+
+			set .baixo, .baixo[select(.@menu$) - 1];
+
+			next;
+			mes .npc$;
+			mes "Tem certeja que deseja visualizar o item [" + getitemname(.baixo) + "] ?";
+
+			if (select("- Sim:- Não") == 2) close;
+
+				.atual = getlook(LOOK_HEAD_BOTTOM);
+				.view = getiteminfo (.baixo,11);
+
+				next;
+				mes .npc$;
+				mes "Você tem "+.time+" segundos para visualizar o item.";
+				close2;
+				changelook LOOK_HEAD_BOTTOM,.view;
+				sleep2 .time*1000;
+				changelook LOOK_HEAD_BOTTOM,.atual;
+				end;
+	}
+}
