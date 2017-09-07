@@ -1,0 +1,76 @@
+//                                                                                                
+//                                                                                                    
+//  DDDDDDDD      D                          D       DDDDDDDDDD                                       
+// DDDDDDDDDDD  DDDD                      DDDDD      DDDDDDDDDDD                                      
+//  DDDDDDDDDD DDDDD                      DDDDD       DDDD  DDDD                                      
+//   DDDD  DDDD DD                        DDDDD       DDDD    DD                                      
+//   DDDD  DDDD    D    DD   DD     DD     DDDD       DDDD          DD       DD  D     D   D    D     
+//   DDDD  DDDD DDDD  DDDDDD DDD  DDDDDD   DDDD       DDDD  D     DDDDDD   DDDD DDD DDDD DDDD DDDDD   
+//   DDDD  DDDDDDDDD  DDDDDD DD  DDD  DD   DDDD       DDDD DD    DD  DDD  DDDDDDDDD DDDDDDDDDDDDDDD   
+//   DDDDDDDDD  DDDD   DDDDD D   DDD  DDD  DDDD       DDDDDDD    DD  DDDD  DDDDDDDD DDDDDDDDDD DDDD   
+//   DDDDDDDD   DDDD    DDDDDD  DDDDDDDDD  DDDD       DDDDDDD        DDDD  DDDD DD  DDDD  DDDD DDDD   
+//   DDDDDD     DDDD     DDDD   DDDDDDDDD  DDDD       DDDD  D     DDDDDDD  DDDD     DDDD  DDDD  DDD   
+//   DDDD       DDDD    DDDDDD  DDDD       DDDD       DDDD  D    DDD DDDD  DDDD     DDDD  DDDD  DDD   
+//   DDDD       DDDD    D DDDD   DDD       DDDD       DDDD      DDDD DDDD  DDDD     DDDD  DDDD DDDD   
+//   DDDD       DDDD   DD DDDDD  DDDD  DD  DDDD       DDDD      DDDD DDDDD DDDD     DDDD  DDDD DDDD   
+//  DDDDDD     DDDDDD DDD DDDDDD DDDDDDD  DDDDDD    DDDDDDD     DDDDDDDDD DDDDDD    DDDDDDDDDD DDDDD  
+//  DDDDDD     DDDDDDDDDD DDDDDD  DDDDD   DDDDD      DDDDDD      DDDD DDD DDDDDD   DDDDD DDDDD DDDDD  
+// ===========================================================
+//===== Script ===============================================
+//= Buffs & Cura.
+//===== Por: =================================================
+//= Pixel Farm
+//===== Versão Atual: ========================================
+//= 1.0
+//===== Compatibilidade: =====================================
+//= Cronus, Rathena, Hercules e BrAthena.
+//===== Descrição: ===========================================
+//= NPC que permite jogadores se curarem e buffarem com delay.
+//===== ChangeLog: ===========================================
+//06/09/2917 = Criação do script e configurações gerais. [Pixel Farm]
+//============================================================
+prontera,159,191,3	script	Buffs & Cura	936,{
+
+//===== Configurações do NPC =================================
+
+.npc$ = "[Buffs & Cura]"; // Nome do NPC.
+.time = 7; // Tempo que o jogador precisa esperar para se buffar novamente[Em segundos]. (Para desabilitar coloque 0).
+.lv = 1; // Level para o jogador ser considerado vip.
+setarray .buffn[0], 30, 32; // ID dos buffs do jogador normal. (Pode ser consultado no arquivo const).
+setarray .blvn[0],  10, 10; // Level dos buffs do jogador normal.
+.tbuffn = 5; // Tempo dos buffs do jogador normal[Minutos].
+setarray .buffv[0], 30, 35, 41, 40, 32, 29, 39; // ID dos buffs do jogador vip. (Pode ser consultado no arquivo const).
+setarray .blvv[0],  10, 10, 10, 10, 10, 10, 10; // Level dos buffs do jogador vip.
+.tbuffv = 10; // Tempo dos buffs do jogador vip[Minutos].
+.msgn$ = "Tenha um bom jogo."; // Mensagem que vai ser exibida quando o jogador normal se buffar e curar.
+.msgv$ = "Espero que você esteja se divertindo em nosso servidor, tenha um excelente jogo."; // Mensagem que vai ser exibida quando o jogador vip se buffar e curar.
+
+//============================================================
+
+.@delay = gettimetick(2);
+
+if( .@delay < buff_delay ) { message strcharinfo(0), .npc$+" Aguarde "+(buff_delay - .@delay)+" segundos para se buffar e curar novamente."; end; }
+
+buff_delay = gettimetick(2) + .time;
+
+if(getgmlevel() < .lv){
+
+specialeffect2 7;
+percentheal 100,100;
+for( set .@i, 0; .@i < getarraysize(.buffn); set .@i, .@i + 1 )
+sc_start .buffn[.@i],.tbuffn*60000,.blvn[.@i];
+message strcharinfo(0), .npc$+" "+.msgn$+"";
+end;
+}
+
+specialeffect2 14;
+percentheal 100,100;
+for( set .@i, 0; .@i < getarraysize(.buffv); set .@i, .@i + 1 )
+sc_start .buffv[.@i],.tbuffv*60000,.blvv[.@i];
+message strcharinfo(0), .npc$+" "+.msgv$+"";
+end;
+
+OnPCLoginEvent:
+.@delay = 0;
+end;
+}
